@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto Shayari Generator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;font-family:Arial,sans-serif;background:linear-gradient(135deg,#090018,#250044,#090018);color:white;display:flex;justify-content:center;align-items:center;padding:20px}
+.container{width:100%;max-width:600px}
+h1{text-align:center;font-size:32px;margin-bottom:8px;color:#ff5bd8;text-shadow:0 0 20px #ff00cc}
+.subtitle{text-align:center;color:#bbb;margin-bottom:25px}
+.card{padding:25px;border-radius:25px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(15px);box-shadow:0 0 40px rgba(255,0,200,.2)}
+select,button{width:100%;padding:15px;border-radius:12px;border:0;font-size:16px}
+select{background:#180827;color:white;margin-bottom:15px;outline:none}
+button{background:linear-gradient(90deg,#ff1493,#8a2be2);color:white;font-weight:bold;cursor:pointer;transition:.3s}
+button:hover{transform:translateY(-2px);box-shadow:0 0 20px #ff1493}
+.shayari{min-height:230px;margin-top:20px;padding:25px 15px;border-radius:18px;background:rgba(0,0,0,.3);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.line{font-size:20px;line-height:1.8;opacity:0;transform:translateY(15px);animation:showLine .7s forwards;text-shadow:0 0 12px #ff55dd}
+.placeholder{color:#999;line-height:1.8}
+.actions{display:flex;gap:10px;margin-top:15px}.actions button{flex:1}
+@keyframes showLine{to{opacity:1;transform:translateY(0)}}
+@media(max-width:500px){h1{font-size:27px}.card{padding:18px}.line{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>✨ Auto Shayari</h1>
+<p class="subtitle">एक क्लिक में नई शायरी बनाएं</p>
+<div class="card">
+<select id="category">
+<option value="love">❤️ Love</option>
+<option value="sad">💔 Sad</option>
+<option value="attitude">😎 Attitude</option>
+<option value="friendship">🤝 Friendship</option>
+<option value="motivation">🔥 Motivation</option>
+</select>
+<button onclick="generateShayari()">✨ नई शायरी बनाएं</button>
+<div class="shayari" id="shayari"><div class="placeholder">Category चुनें और<br>नई शायरी बनाएं ❤️</div></div>
+<div class="actions"><button onclick="copyShayari()">📋 Copy</button><button onclick="downloadShayari()">⬇️ Save</button></div>
+</div>
+</div>
+<script>
+const shayari={
+love:[
+["तेरी मुस्कान मेरी पहचान बन गई,","तेरी हर बात मेरी जान बन गई,","तू मिला तो लगा जिंदगी मिल गई,","वरना ये जिंदगी बस एक कहानी बन गई।"],
+["तेरी आँखों में कुछ ऐसा नशा है,","दिल को बस तेरा ही इंतज़ार है,","तू पास हो तो सब खूबसूरत लगे,","तू दूर हो तो दिल बेकरार है।"],
+["मोहब्बत का कोई हिसाब नहीं होता,","सच्चे प्यार का कोई जवाब नहीं होता,","जिसे दिल से चाहो जिंदगी भर,","उससे बढ़कर कोई ख्वाब नहीं होता।"]],
+sad:[
+["दिल आज भी तुझे याद करता है,","हर पल तेरा इंतज़ार करता है,","तू लौटेगा नहीं ये पता है मुझे,","फिर भी ये दिल तुझसे प्यार करता है।"],
+["कुछ रिश्ते अधूरे ही अच्छे होते हैं,","क्योंकि पूरे होकर भी कहाँ सच्चे होते हैं,","जिसे अपना समझा वही दूर चला गया,","और हम अकेले ही बैठे रह गए।"]],
+attitude:[
+["हमसे जलने वालों की कमी नहीं,","लेकिन हमें फर्क पड़ने की भी कमी नहीं,","हम अपनी दुनिया में खुश रहते हैं,","किसी के पीछे चलने की आदत नहीं।"],
+["नाम छोटा है मगर पहचान बड़ी है,","हमारी कहानी थोड़ी अलग खड़ी है,","जो हमें समझ सके वही खास है,","बाकी दुनिया तो बस आसपास है।"]],
+friendship:[
+["दोस्ती वो नहीं जो हर वक्त साथ हो,","दोस्ती वो है जो दूर होकर भी पास हो,","दोस्त अगर सच्चा मिल जाए जिंदगी में,","तो हर मुश्किल अपने आप आसान हो।"],
+["कुछ दोस्त जिंदगी में खास होते हैं,","उनके बिना दिन भी उदास होते हैं,","दुनिया चाहे कुछ भी कहे हमें,","हमारे दोस्त हमेशा हमारे पास होते हैं।"]],
+motivation:[
+["रास्ते मुश्किल हैं तो क्या हुआ,","मंजिल अभी दूर है तो क्या हुआ,","चलते रहो अपने हौसले के साथ,","एक दिन जीत तुम्हारी होगी।"],
+["हार से कभी डरना मत,","मुश्किलों से कभी रुकना मत,","आज अगर वक्त खराब है,","तो कल के लिए उम्मीद छोड़ना मत."]]
+};
+let currentText="";
+function generateShayari(){
+const category=document.getElementById("category").value;
+const list=shayari[category];
+const selected=list[Math.floor(Math.random()*list.length)];
+currentText=selected.join("\n");
+const box=document.getElementById("shayari");box.innerHTML="";
+selected.forEach((text,index)=>{const line=document.createElement("div");line.className="line";line.style.animationDelay=(index*.35)+"s";line.innerText=text;box.appendChild(line);});
+}
+function copyShayari(){
+if(!currentText){alert("पहले शायरी बनाएं ❤️");return}
+navigator.clipboard.writeText(currentText).then(()=>alert("शायरी Copy हो गई ❤️"));
+}
+function downloadShayari(){
+if(!currentText){alert("पहले शायरी बनाएं ❤️");return}
+const blob=new Blob([currentText],{type:"text/plain;charset=utf-8"});
+const url=URL.createObjectURL(blob);const a=document.createElement("a");
+a.href=url;a.download="shayari.txt";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
